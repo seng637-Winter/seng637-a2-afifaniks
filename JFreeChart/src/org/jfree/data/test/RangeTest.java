@@ -69,6 +69,26 @@ public class RangeTest {
         assertEquals("The central value should be 200.0", 200.0, range.getCentralValue(), 0.0001);
     }
     
+    @Test
+    public void testGetCentralValueWithPositiveBoundaryRange() {
+        // Create a range with positive boundary
+        Range range = new Range(10.0, Double.MAX_VALUE);       
+        
+        Double expectedValue = 8.988465674311579E307;
+        // Check the central value of the range
+        assertEquals("The central value should be 8.988465674311579E307", expectedValue, range.getCentralValue(), 0.0001);
+    }
+    
+    @Test
+    public void testGetCentralValueWithNegativeBoundaryRange() {
+        // Create a range with negative boundary
+        Range range = new Range(Double.MIN_VALUE, Double.MAX_VALUE);       
+        
+        Double expectedValue = (Double.MIN_VALUE  + Double.MAX_VALUE) / 2;
+        // Check the central value of the range
+        assertEquals("The central value should be " + expectedValue, expectedValue, range.getCentralValue(), 0.0001);
+    }
+    
     /*
      * Test case for contains
      */
@@ -93,19 +113,28 @@ public class RangeTest {
     @Test
     public void testContainsWithNumberEqualToLowerBound() {
         // Create a range
-        Range range = new Range(1.0, 5.0);
+        Range range = new Range(Double.MIN_VALUE, 5.0);
         
         // Verify that the range contains 1.0
-        assertTrue("The range should contain 1.0", range.contains(1.0));
+        assertTrue("The range should contain 1.0", range.contains(Double.MIN_VALUE));
     }
 
     @Test
     public void testContainsWithNumberEqualToUpperBound() {
         // Create a range
-        Range range = new Range(1.0, 5.0);
+        Range range = new Range(1.0, Double.MAX_VALUE);
         
         // Verify that the range contains 5.0
-        assertTrue("The range should contain 5.0", range.contains(5.0));
+        assertTrue("The range should contain 5.0", range.contains(Double.MAX_VALUE));
+    }
+    
+    @Test
+    public void testContainsWithRangeHavingEqualToNaN() {
+        // Create a range
+        Range range = new Range(Double.NaN, Double.NaN);
+        
+        // Verify that the range contains 5.0
+        assertFalse("The range should not contain 1.0", range.contains(1.0));
     }
 
     @Test
@@ -231,6 +260,21 @@ public class RangeTest {
         assertNotNull(combined);
         assertEquals(1, combined.getLowerBound(), 0.001);
         assertEquals(5, combined.getUpperBound(), 0.001);
+    }
+    
+    @Test
+    public void testCombineWithValidRange() {
+        // Define two valid ranges
+        Range range1 = new Range(1, 5);
+        Range range2 = new Range(2, 7);
+        
+        // Combine ranges
+        Range combined = Range.combine(range2, range1);
+        
+        // Verify that the combined range equals the non-null range
+        assertNotNull(combined);
+        assertEquals(1, combined.getLowerBound(), 0.001);
+        assertEquals(7, combined.getUpperBound(), 0.001);
     }
 
     @Test
