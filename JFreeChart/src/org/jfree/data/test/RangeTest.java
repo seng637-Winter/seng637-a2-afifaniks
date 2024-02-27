@@ -211,6 +211,24 @@ public class RangeTest {
         // Verify that the range intersects with another range that is completely within it
         assertTrue("The ranges should intersect", range.intersects(2.0, 4.0));
     }
+    
+    @Test
+    public void testIntersectsWhenContainingPositiveBoundary() {
+        // Create a range
+        Range range = new Range(1.0, Double.MAX_VALUE);
+        
+        // Verify that the range intersects with another range that is completely within it
+        assertTrue("The ranges should intersect", range.intersects(2.0, 4.0));
+    }
+    
+    @Test
+    public void testIntersectsWhenContainingNegativeBoundary() {
+        // Create a range
+        Range range = new Range(Double.MIN_VALUE, 10);
+        
+        // Verify that the range intersects with another range that is completely within it
+        assertTrue("The ranges should intersect", range.intersects(-1.0, 4.0));
+    }
 
     @Test
     public void testIntersectsWhenRangesAreIdentical() {
@@ -276,6 +294,21 @@ public class RangeTest {
         assertEquals(1, combined.getLowerBound(), 0.001);
         assertEquals(7, combined.getUpperBound(), 0.001);
     }
+    
+    @Test
+    public void testCombineWithBoundaryValues() {
+        // Define two valid ranges
+        Range range1 = new Range(Double.MIN_VALUE, 5);
+        Range range2 = new Range(2, Double.MAX_VALUE);
+        
+        // Combine ranges
+        Range combined = Range.combine(range2, range1);
+        
+        // Verify that the combined range equals the non-null range
+        assertNotNull(combined);
+        assertEquals(Double.MIN_VALUE, combined.getLowerBound(), 0.001);
+        assertEquals(Double.MAX_VALUE, combined.getUpperBound(), 0.001);
+    }
 
     @Test
     public void testCombineWithBothRangesNull() {
@@ -340,7 +373,7 @@ public class RangeTest {
     @Test
     public void testEqualsWithDifferentUpperBounds() {
         // Create two ranges with different upper bounds
-        Range range1 = new Range(1.0, 5.0);
+        Range range1 = new Range(1.0, Double.MAX_VALUE);
         Range range2 = new Range(1.0, 6.0);
         
         // Test inequality
@@ -350,7 +383,7 @@ public class RangeTest {
     @Test
     public void testEqualsWithDifferentLowerBounds() {
         // Create two ranges with different lower bounds
-        Range range1 = new Range(1.0, 5.0);
+        Range range1 = new Range(Double.MIN_VALUE, 5.0);
         Range range2 = new Range(2.0, 5.0);
         
         // Test inequality
